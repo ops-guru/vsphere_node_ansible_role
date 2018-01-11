@@ -1,0 +1,14 @@
+---
+- name: 'Power OFF vms {{poweroff_vms_list|join(", ")}}'
+  vsphere_guest:
+    vcenter_hostname: '{{deploy_vcenter.hostname|mandatory}}'
+    username:         '{{vault_vcenter_username|mandatory}}'
+    password:         '{{vault_vcenter_password|mandatory}}'
+    guest:            '{{vm_name}}'
+    validate_certs:   false
+    state:            '{{operation}}'
+  with_items:         '{{poweroff_vms_list|default([])|list}}'
+  when:
+  - poweroff_vms_list|default([])|length
+  loop_control:
+    loop_var: vm_name

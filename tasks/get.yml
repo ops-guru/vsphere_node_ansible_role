@@ -1,0 +1,20 @@
+---
+- name: get instanceuuid vm info
+  shell: |
+    ./getallvms.py \
+    -s "{{deploy_vcenter.hostname}}" \
+    -u "{{vault_vcenter_username}}" \
+    -p "{{vault_vcenter_password}}" \
+    -S \
+    | grep "{{vm_name}}" -A 2 \
+    | grep -i uuid \
+    | sed -e "s/[()',]//g;" \
+    | awk '{ print $4; }'
+  args:
+    chdir: "{{pyvmomi_samples}}"
+  register: getallvms_cmd
+  changed_when: false
+
+- name: set instance_uuid
+  set_fact:
+    instance_uuid: "{{getallvms_cmd.stdout}}"

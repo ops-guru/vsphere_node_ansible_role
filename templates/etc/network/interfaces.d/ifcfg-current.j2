@@ -1,0 +1,13 @@
+{#
+  vim: ft=jinja
+#}
+auto {{vm_iface_name|default("eth0")}}
+iface {{vm_iface_name|default("eth")}} inet {{vm_iface_mode|default("dhcp")}}
+{% if vm_iface_mode|default("dhcp") != "dhcp" %}
+    address {{vm_ip}}
+    netmask {{vm_netmask|default("255.255.255.0")}}
+    gateway {{vm_gateway|default("192.168.116.254")}}
+{% if dns_servers|default([])|length %}
+    dns-nameservers{% for server in dns_servers %} {{dns_server}}{% endfor %}
+{% endif %}
+{% endif %}

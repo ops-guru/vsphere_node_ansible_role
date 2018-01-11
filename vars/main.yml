@@ -1,0 +1,20 @@
+---
+# vars file for ops-guru.vsphere_node
+deploy_vcenter:
+  hostname:       '{{lookup("env", "VCENTER_HOSTNAME")}}'
+  cluster:        '{{lookup("env", "VCENTER_CLUSTER")}}'
+  datacenter:     '{{lookup("env", "VCENTER_DATACENTER")}}'
+  # comma separated list of hosts' IPs.
+  hosts:          '{{lookup("env", "VCENTER_HOSTS")}}' # TODO: obsolete this
+  datastore:      '{{lookup("env", "VCENTER_DATASTORE")}}'
+  # in DC set up, relative folder under datacenter, without initial '/':
+  vm_folder:      '{{lookup("env", "VCENTER_FOLDER")}}'
+  vm_template:      '{{lookup("env", "VM_TEMPLATE")}}'
+pyvmomi_samples:  '{{lookup("env", "PYVMOMI_SAMPLES")}}'
+resource_pool:    '{{lookup("env", "VCENTER_RESOURCE_POOL")}}'
+dns_servers: []
+# VCenter cluster lists:
+poweron_vms_list: []
+poweroff_vms_list: []
+revert_vms_list: []
+vm_snapshot_name: 'my_cool_snapshot'

@@ -1,0 +1,9 @@
+# vim: ts=2 sw=2 et ft=ansible.yaml
+---
+- name: 'validate variables defined for operation={{operation}}'
+  assert:
+    that: '{{condition}}'
+  with_items:
+  - poweron_vms_list|default([])|length
+  loop_control:
+    loop_var: condition

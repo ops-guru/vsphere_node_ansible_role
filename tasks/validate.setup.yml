@@ -1,0 +1,23 @@
+# vim: ts=2 sw=2 et ft=ansible.yaml
+---
+# validate we have pyvmomi_samples folder indeed
+- name: check we have samples dir
+  stat:
+    path: '{{pyvmomi_samples}}'
+  register: pyvmomi_samples_data
+
+- name: validate it is a folder
+  assert:
+    that: '{{item}}'
+  with_items:
+  - pyvmomi_samples_data.stat.exists
+  - pyvmomi_samples_data.stat.isdir
+
+- name: validate variables defined
+  assert:
+    that: '{{condition}}'
+  with_items:
+  - setup_vms_list|default([])|length
+  - (dns_servers is defined)
+  loop_control:
+    loop_var: condition

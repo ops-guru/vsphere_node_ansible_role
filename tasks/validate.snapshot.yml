@@ -1,0 +1,11 @@
+# vim: ts=2 sw=2 et ft=ansible.yaml
+---
+# validate we have pyvmomi_samples folder indeed
+- name: validate variables defined
+  assert:
+    that: '{{condition}}'
+  with_items:
+  - vm_snapshot_name|default("")|length
+  - snapshot_vms_list|default([])|length
+  loop_control:
+    loop_var: condition

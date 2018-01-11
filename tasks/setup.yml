@@ -1,0 +1,47 @@
+---
+# tasks file for ops-guru.vsphere_node
+- name: 'deploying vm: {{vm_name}}, from template: {{vm_template}}'
+  vsphere_guest:
+    vcenter_hostname: '{{deploy_vcenter.hostname}}'
+    username:         '{{vault_vcenter_username}}'
+    password:         '{{vault_vcenter_password}}'
+    from_template:    yes
+    template_src:     '{{vm_template}}'
+    validate_certs:   no
+    vm_extra_config:
+      folder:         '{{deploy_vcenter.vm_folder}}'
+    vm_disk:
+      disk1:
+        datastore:    '{{deploy_vcenter.datastore}}'
+    cluster:          '{{deploy_vcenter.cluster|default(omit)}}'
+    resource_pool:    '{{deploy_vcenter.resource_pool|default(omit)}}'
+    esxi:
+        datacenter:   '{{deploy_vcenter.datacenter}}'
+        hostname:     '{{deploy_vcenter.hosts|shuffle|last}}'
+    guest:            '{{vm_data.name}}'
+  register: created_vms
+  with_items: '{{setup_vms_list|default([])|list}}'
+  loop_control:
+    loop_var: vm_data
+  when:
+  - setup_vms_list|default([])|length
+  - ('name' in vm_data)
+  tags:
+  - setup
+
+- name: print created vm data
+  debug:
+    msg: 'created_vms: {{created_vms}}'
+  tags:
+  - setup
+
+- name: configure the vms we created
+  include_tasks: upload.yml
+  with_items: '{{setup_vms_list|default([])|list}}'
+  when:
+  - created_vms|default([])|length
+  loop_control:
+    loop_var: vm_data
+  tags:
+  - setup
+

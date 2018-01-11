@@ -1,0 +1,15 @@
+# vim: ts=2 sw=2 et ft=ansible.yaml
+---
+- name: validate variables defined
+  assert:
+    that: '{{condition}}'
+  with_items:
+  - vault_vcenter_username|default("")|length
+  - vault_vcenter_password|default("")|length
+  - revert_vms_list|default([])|length
+  - vm_snapshot_name|default("")|length
+  - deploy_vcenter.hostname|default("")|length
+  - deploy_vcenter.datacenter|default("")|length
+  - deploy_vcenter.vm_folder|default("")|length
+  loop_control:
+    loop_var: condition

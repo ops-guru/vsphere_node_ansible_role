@@ -1,0 +1,7 @@
+# vim: ts=2 sw=2 et ft=ansible.yaml
+---
+## for VMWare vCenter control:
+vault_vcenter_username: 'vcUser@domain.com'
+vault_vcenter_password: 'vcP@ssw0r7'
+vault_vm_username: 'root'
+vault_vm_password: 'p@ssw0r7'

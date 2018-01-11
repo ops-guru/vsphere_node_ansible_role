@@ -1,0 +1,39 @@
+---
+
+- name: setup variables of current vm
+  set_fact:
+    vm_name:        '{{vm_data.name}}'
+    vm_ip:          '{{vm_data.ip|default(omit)}}'
+    vm_iface_name:  '{{vm_data.iface_name|default("eth0")}}'
+    vm_iface_mode:  '{{vm_data.iface_mode|default("dhcp")}}'
+    vm_netmask:     '{{vm_data.netmask|default(omit)}}'
+
+- name: 'get instance details from vcenter for {{vm_data.name}}'
+  include_tasks: get.yml
+
+- name: 'upload the file for os family "{{ansible_os_family}}"'
+  include_tasks: 'upload.{{ansible_os_family}}.yml'
+  when:
+  - (ansible_os_family in ["RedHat", "Debian"])
+
+- name: Fail run if file not uploaded
+  fail:
+    msg: "{{network_file.stdout}}"
+  when:
+    - network_file.stdout != "Successfully uploaded file"
+
+- name: reboot system
+  shell: |
+    ./soft_reboot.py \
+    -s "{{deploy_vcenter.hostname}}" \
+    -u "{{vault_vcenter_username}}" \
+    -p "{{vault_vcenter_password}}" \
+    -S \
+    --uuid "{{instance_uuid}}"
+  args:
+    executable: /bin/bash
+    chdir:      "{{pyvmomi_samples}}"
+  when:
+  - network_file|succeeded
+  tags:
+  - setup

@@ -1,0 +1,18 @@
+---
+- name: 'take a snapshot "{{vm_snapshot_name}}"'
+  vmware_guest_snapshot:
+    hostname:       '{{deploy_vcenter.hostname|mandatory}}'
+    username:       '{{vault_vcenter_username|mandatory}}'
+    password:       '{{vault_vcenter_password|mandatory}}'
+    name:           '{{curr_vm_name|mandatory}}'
+    name_match:     'last'
+    datacenter:     '{{deploy_vcenter.datacenter|mandatory}}'
+    snapshot_name:  '{{vm_snapshot_name|mandatory}}'
+    state:          present
+    validate_certs: false
+  with_items: '{{snapshot_vms_list|default([])|list}}'
+  when:
+  - snapshot_vms_list|default([])|length
+  loop_control:
+    loop_var: curr_vm_name
+

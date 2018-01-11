@@ -1,0 +1,20 @@
+---
+- name: 'reverting vms to snapshot "{{vm_snapshot_name}}"'
+  vmware_guest_snapshot:
+    hostname:       '{{deploy_vcenter.hostname}}'
+    username:       '{{vault_vcenter_username}}'
+    password:       '{{vault_vcenter_password}}'
+    name:           '{{vm_name}}'
+    #name_match:     'last'
+    datacenter:     '{{deploy_vcenter.datacenter}}'
+    folder:         '{{deploy_vcenter.datacenter}}/{{deploy_vcenter.vm_folder}}'
+    snapshot_name:  '{{vm_snapshot_name}}'
+    state:          revert
+    validate_certs: false
+  with_items: '{{revert_vms_list|default([])|list}}'
+  when:
+  - revert_vms_list|default([])|length
+  - vm_name|length
+  loop_control:
+    loop_var: vm_name
+

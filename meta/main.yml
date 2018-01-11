@@ -1,0 +1,37 @@
+# vim: ts=2 sw=2 et ft=ansible.yaml
+---
+galaxy_info:
+  author: Max Kovgan
+  description: vsphere node setup
+  company: OpsGuru
+  # issue_tracker_url: http://example.com/issue/tracker
+  license: MIT
+  min_ansible_version: 2.3
+  #github_branch:
+  platforms:
+  - name: EL
+    versions:
+    - 6
+    - 7
+  - name: Ubuntu
+    versions:
+    - xenial
+  #- name: Debian
+  #  versions:
+  #  - all
+  #  - etch
+  #  - jessie
+  #  - lenny
+  #  - sid
+  #  - squeeze
+  #  - stretch
+  #  - wheezy
+  categories:
+  - system
+  - virtualization
+  galaxy_tags:
+  - vmware
+  - vcenter
+  - vsphere
+  - virtualizaton
+dependencies: []

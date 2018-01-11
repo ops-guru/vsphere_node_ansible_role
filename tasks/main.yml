@@ -1,0 +1,27 @@
+# vim: ts=2 sw=2 et ft=ansible.yaml
+---
+# tasks file for ops-guru.vsphere_node
+- name: setup legal operations
+  set_fact:
+    legal_operations:
+      - setup
+      - revert
+      - snapshot
+      - powered_on
+      - powered_off
+  tags:
+  - ops-guru.vsphere_node
+
+- name: run validations
+  include_tasks: validate.yml
+  when:
+  - (operation in legal_operations)
+  tags:
+  - ops-guru.vsphere_node
+
+- name: 'vm operation={{operation}}'
+  include_tasks: '{{operation}}.yml'
+  when:
+  - (operation in legal_operations)
+  tags:
+  - ops-guru.vsphere_node

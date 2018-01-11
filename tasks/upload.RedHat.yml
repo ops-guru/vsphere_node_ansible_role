@@ -1,0 +1,25 @@
+---
+- name: 'create interface file from template (for {{ansible_os_family}})'
+  template:
+    src:  'etc/sysconfig/network-scripts/ifcfg-current.j2'
+    dest: '{{playbook_dir|dirname}}/ifcfg-{{vm_iface_name}}-{{vm_name}}'
+
+- name: place network config file, wait for vmtools
+  shell: |
+    ./upload_file_to_vm.py \
+    -u "{{vault_vcenter_username}}" \
+    -p "{{vault_vcenter_password}}" \
+    -s "{{deploy_vcenter.hostname}}" \
+    -v "{{instance_uuid}}" \
+    -r "{{vault_vm_username}}" \
+    -w "{{vault_vm_password}}" \
+    -l "/etc/sysconfig/network-scripts/ifcfg-{{vm_iface_name}}" \
+    -f "{{playbook_dir|dirname}}/ifcfg-{{vm_iface_name}}-{{vm_name}}"
+  args:
+    executable: /bin/bash
+    chdir:      '{{pyvmomi_samples}}'
+  register:     network_file
+  until:
+  - network_file.rc == 0
+  retries:      5
+  delay:        15
