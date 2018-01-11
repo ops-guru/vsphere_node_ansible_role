@@ -6,7 +6,7 @@
     password:         '{{vault_vcenter_password|mandatory}}'
     guest:            '{{vm_name}}'
     validate_certs:   false
-    state:            '{{operation}}'
+    state:            powered_on
   with_items:         '{{poweron_vms_list|default([])|list}}'
   when:
   - poweron_vms_list|default([])|length

@@ -6,7 +6,7 @@
     password:         '{{vault_vcenter_password|mandatory}}'
     guest:            '{{vm_name}}'
     validate_certs:   false
-    state:            '{{operation}}'
+    state:            powered_off
   with_items:         '{{poweroff_vms_list|default([])|list}}'
   when:
   - poweroff_vms_list|default([])|length

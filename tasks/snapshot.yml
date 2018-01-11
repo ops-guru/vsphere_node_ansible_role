@@ -1,18 +1,23 @@
+# vim: ts=2 sw=2 et ft=ansible.yaml
 ---
-- name: 'take a snapshot "{{vm_snapshot_name}}"'
+- name: 'taking a snapshot "{{vm_snapshot_name}}" on vms'
   vmware_guest_snapshot:
-    hostname:       '{{deploy_vcenter.hostname|mandatory}}'
-    username:       '{{vault_vcenter_username|mandatory}}'
-    password:       '{{vault_vcenter_password|mandatory}}'
-    name:           '{{curr_vm_name|mandatory}}'
+    hostname:       '{{deploy_vcenter.hostname}}'
+    username:       '{{vault_vcenter_username}}'
+    password:       '{{vault_vcenter_password}}'
+    name:           '{{vm_name}}'
     name_match:     'last'
-    datacenter:     '{{deploy_vcenter.datacenter|mandatory}}'
-    snapshot_name:  '{{vm_snapshot_name|mandatory}}'
+    datacenter:     '{{deploy_vcenter.datacenter}}'
+    folder:         '{{deploy_vcenter.datacenter}}/{{deploy_vcenter.vm_folder}}'
+    quiesce:        true
+    snapshot_name:  '{{vm_snapshot_name}}'
     state:          present
     validate_certs: false
   with_items: '{{snapshot_vms_list|default([])|list}}'
   when:
   - snapshot_vms_list|default([])|length
+  - vm_name|length
   loop_control:
-    loop_var: curr_vm_name
-
+    loop_var: vm_name
+  notify:
+  - power vms on

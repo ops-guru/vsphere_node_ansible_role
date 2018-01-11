@@ -1,3 +1,4 @@
+# vim: ts=2 sw=2 et ft=ansible.yaml
 ---
 - name: 'reverting vms to snapshot "{{vm_snapshot_name}}"'
   vmware_guest_snapshot:
@@ -17,4 +18,24 @@
   - vm_name|length
   loop_control:
     loop_var: vm_name
+  register:   reverted_vms_list
 
+- name: overwrite poweron_vms_list
+  set_fact:
+    poweron_vms_list: []
+
+- name: update poweron_vms_list with changed vms
+  set_fact:
+    poweron_vms_list: '{{poweron_vms_list + [vm_data.vm_name]}}'
+  with_items: '{{reverted_vms_list|default([])|list}}'
+  when:
+  - reverted_vms_list|default([])|length
+  - vm_data.changed|default(false)
+  - not(vm_data.failed|default(true))
+  loop_control:
+    loop_var: vm_data
+
+- name: trigger power on
+  include_tasks:  'powered_on.yml'
+  when:
+  - poweron_vms_list|default([])|length
